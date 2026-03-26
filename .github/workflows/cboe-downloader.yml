@@ -1,0 +1,102 @@
+# VINSC INVEST — CBOE Auto Downloader
+# Roda de segunda a sexta, das 10:30 às 17:30 (horário Brasil = UTC-3)
+# ou seja, das 13:30 às 20:30 UTC, de hora em hora
+# GitHub Actions usa UTC — ajuste: Brasil UTC-3 → +3h
+
+name: CBOE Data Downloader
+
+on:
+  schedule:
+    # Horário Brasil → UTC (+3h)
+    # 10:30 BRT = 13:30 UTC
+    - cron: '30 13 * * 1-5'
+    # 11:30 BRT = 14:30 UTC
+    - cron: '30 14 * * 1-5'
+    # 12:30 BRT = 15:30 UTC
+    - cron: '30 15 * * 1-5'
+    # 13:30 BRT = 16:30 UTC
+    - cron: '30 16 * * 1-5'
+    # 14:30 BRT = 17:30 UTC
+    - cron: '30 17 * * 1-5'
+    # 15:30 BRT = 18:30 UTC
+    - cron: '30 18 * * 1-5'
+    # 16:30 BRT = 19:30 UTC
+    - cron: '30 19 * * 1-5'
+    # 17:30 BRT = 20:30 UTC
+    - cron: '30 20 * * 1-5'
+
+  # Permite rodar manualmente a qualquer hora pelo painel GitHub
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Motivo da execução manual (opcional)'
+        required: false
+        default: 'Execução manual'
+
+jobs:
+  download-cboe:
+    name: Baixar CSVs da CBOE
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    permissions:
+      contents: write  # necessário para fazer git push dos CSVs
+
+    steps:
+      # 1. Faz checkout do repositório
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 2. Instala Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 3. Instala dependências
+      - name: Instalar dependências
+        run: npm ci
+
+      # 4. Instala Chromium para Playwright
+      - name: Instalar Playwright + Chromium
+        run: npx playwright install chromium --with-deps
+
+      # 5. Roda o robô
+      - name: Executar robô CBOE
+        run: node src/cboe-robot.js
+
+      # 6. Commit e push dos CSVs atualizados no repositório
+      # Isso faz os arquivos ficarem acessíveis via GitHub Pages (gratuito!)
+      - name: Commitar e publicar CSVs
+        run: |
+          git config user.name "cboe-robot[bot]"
+          git config user.email "cboe-robot@vinsc.com"
+          git add public/cboe/
+          # Só commita se houver mudanças
+          git diff --staged --quiet || git commit -m "🤖 CBOE data update — $(TZ='America/Sao_Paulo' date '+%d/%m/%Y %H:%M') BRT"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 7. Upload dos CSVs como artefato (backup — 7 dias)
+      - name: Salvar CSVs como artefato
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cboe-csvs-${{ github.run_id }}
+          path: public/cboe/*.csv
+          retention-days: 7
+
+      # 8. Log do resultado
+      - name: Mostrar resultado
+        if: always()
+        run: |
+          echo "=== Resultado da execução ==="
+          cat public/cboe/last_run.json 2>/dev/null || echo "Arquivo de log não encontrado"
+          echo ""
+          echo "=== Arquivos gerados ==="
+          ls -lh public/cboe/*.csv 2>/dev/null || echo "Nenhum CSV encontrado"

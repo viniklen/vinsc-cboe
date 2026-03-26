@@ -1,0 +1,25 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Redireciona /api/* para as functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Headers CORS para os arquivos CSV estáticos
+[[headers]]
+  for = "/cboe/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=300"
+
+# Página de status geral
+[[redirects]]
+  from = "/status"
+  to = "/.netlify/functions/status"
+  status = 200
