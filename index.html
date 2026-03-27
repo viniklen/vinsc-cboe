@@ -34,35 +34,18 @@
       min-height: 100vh;
     }
 
-    /* ── Fundo animado ── */
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background-image:
         linear-gradient(rgba(0,229,160,0.025) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0,229,160,0.025) 1px, transparent 1px);
       background-size: 48px 48px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ── Brilho de canto ── */
-    body::after {
-      content: '';
-      position: fixed;
-      top: -200px;
-      right: -200px;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(0,229,160,0.06) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
+      pointer-events: none; z-index: 0;
     }
 
     .wrap {
-      position: relative;
-      z-index: 1;
+      position: relative; z-index: 1;
       max-width: 860px;
       margin: 0 auto;
       padding: 44px 24px 64px;
@@ -91,43 +74,31 @@
       font-size: 11px;
       color: var(--muted);
       margin-top: 5px;
-      letter-spacing: 0.5px;
     }
 
-    /* ── Badge de status global ── */
     .status-pill {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 7px 14px;
+      padding: 7px 16px;
       border: 1px solid var(--border);
       border-radius: 999px;
       font-size: 11px;
-      font-family: var(--mono);
       background: var(--surface);
       transition: border-color 0.3s;
     }
-
-    .status-pill.ok    { border-color: rgba(0,229,160,0.35); }
-    .status-pill.error { border-color: rgba(239,68,68,0.35); }
+    .status-pill.ok      { border-color: rgba(0,229,160,0.35); }
+    .status-pill.error   { border-color: rgba(239,68,68,0.35); }
     .status-pill.loading { border-color: var(--border); }
 
-    .dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--muted);
-      flex-shrink: 0;
-    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
     .dot.ok      { background: var(--accent); animation: blink 2s ease-in-out infinite; }
     .dot.error   { background: var(--danger); }
-    .dot.loading { background: var(--warn);   animation: blink 1s ease-in-out infinite; }
+    .dot.loading { background: var(--warn); animation: blink 1s ease-in-out infinite; }
 
-    @keyframes blink {
-      0%,100% { opacity: 1; }
-      50%      { opacity: 0.3; }
-    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-    /* ── Section title ── */
+    /* ── Section label ── */
     .section-label {
       font-family: var(--sans);
       font-size: 10px;
@@ -145,22 +116,16 @@
       gap: 10px;
       margin-bottom: 36px;
     }
-
-    @media (max-width: 620px) {
-      .assets-grid { grid-template-columns: repeat(3, 1fr); }
-    }
+    @media (max-width: 620px) { .assets-grid { grid-template-columns: repeat(3, 1fr); } }
 
     .asset-card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 16px 14px;
-      transition: border-color 0.25s, transform 0.15s;
-      cursor: default;
       position: relative;
       overflow: hidden;
     }
-
     .asset-card::before {
       content: '';
       position: absolute;
@@ -169,15 +134,11 @@
       background: var(--muted2);
       transition: background 0.3s;
     }
-
-    .asset-card.ok::before    { background: var(--accent); }
-    .asset-card.error::before { background: var(--danger); }
+    .asset-card.ok::before      { background: var(--accent); }
+    .asset-card.error::before   { background: var(--danger); }
     .asset-card.loading::before { background: var(--warn); animation: shimmer 1.5s infinite; }
 
-    @keyframes shimmer {
-      0%,100% { opacity: 0.4; }
-      50%      { opacity: 1; }
-    }
+    @keyframes shimmer { 0%,100%{opacity:0.4} 50%{opacity:1} }
 
     .asset-card.ok    { border-color: rgba(0,229,160,0.2); }
     .asset-card.error { border-color: rgba(239,68,68,0.2); }
@@ -189,25 +150,13 @@
       line-height: 1;
       margin-bottom: 8px;
       color: var(--muted);
-      transition: color 0.3s;
     }
-
-    .asset-card.ok    .asset-ticker { color: var(--accent); }
+    .asset-card.ok .asset-ticker    { color: var(--accent); }
     .asset-card.error .asset-ticker { color: var(--danger); }
 
-    .asset-status {
-      font-size: 10px;
-      color: var(--muted);
-      line-height: 1.4;
-    }
+    .asset-status { font-size: 10px; color: var(--muted); line-height: 1.4; }
+    .asset-size   { font-size: 11px; color: var(--text); margin-top: 6px; }
 
-    .asset-size {
-      font-size: 11px;
-      color: var(--text);
-      margin-top: 6px;
-    }
-
-    /* Skeleton loader */
     .skeleton {
       display: inline-block;
       width: 60px; height: 10px;
@@ -217,13 +166,9 @@
       animation: skeleton-wave 1.5s infinite;
       vertical-align: middle;
     }
+    @keyframes skeleton-wave { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-    @keyframes skeleton-wave {
-      0%   { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    /* ── Info box (última execução) ── */
+    /* ── Info box ── */
     .info-box {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -240,19 +185,153 @@
       border-bottom: 1px solid var(--border);
       gap: 16px;
     }
-
     .info-row:last-child { border-bottom: none; }
-
     .info-label { color: var(--muted); font-size: 11px; white-space: nowrap; }
-
-    .info-value {
-      color: var(--text);
-      font-size: 11px;
-      text-align: right;
-    }
+    .info-value { color: var(--text); font-size: 11px; text-align: right; }
     .info-value.green  { color: var(--accent); }
     .info-value.warn   { color: var(--warn); }
     .info-value.danger { color: var(--danger); }
+
+    /* ── Painel trigger ── */
+    .trigger-panel {
+      background: var(--surface);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 36px;
+    }
+
+    .trigger-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .trigger-title {
+      font-size: 12px;
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .trigger-sub {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .trigger-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .field-label {
+      font-size: 10px;
+      color: var(--muted);
+      white-space: nowrap;
+      width: 82px;
+      flex-shrink: 0;
+    }
+
+    .field-input {
+      flex: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .field-input:focus { border-color: rgba(59,130,246,0.5); }
+    .field-input::placeholder { color: var(--muted2); }
+
+    .trigger-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding-top: 4px;
+    }
+
+    .run-btn {
+      background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(59,130,246,0.4);
+      color: var(--blue);
+      padding: 9px 22px;
+      border-radius: 7px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .run-btn:hover:not(:disabled) {
+      background: rgba(59,130,246,0.22);
+      border-color: rgba(59,130,246,0.7);
+    }
+    .run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .run-btn.running { color: var(--warn);   border-color: rgba(245,158,11,0.4);  background: rgba(245,158,11,0.08); }
+    .run-btn.success { color: var(--accent); border-color: rgba(0,229,160,0.4);   background: rgba(0,229,160,0.08); }
+    .run-btn.fail    { color: var(--danger); border-color: rgba(239,68,68,0.4);   background: rgba(239,68,68,0.08); }
+
+    .trigger-msg {
+      font-size: 11px;
+      color: var(--muted);
+      flex: 1;
+      min-width: 0;
+    }
+    .trigger-msg a { color: var(--blue); text-decoration: none; }
+    .trigger-msg a:hover { text-decoration: underline; }
+    .trigger-msg.ok   { color: var(--accent); }
+    .trigger-msg.err  { color: var(--danger); }
+    .trigger-msg.warn { color: var(--warn); }
+
+    /* Log de trigger */
+    .trigger-log {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.8;
+      white-space: pre-wrap;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+    .trigger-log.visible { display: block; }
+    .trigger-log .ok   { color: var(--accent); }
+    .trigger-log .err  { color: var(--danger); }
+    .trigger-log .warn { color: var(--warn); }
+
+    .trigger-hint {
+      font-size: 10px;
+      color: var(--muted);
+      padding: 10px 20px;
+      border-top: 1px solid var(--border);
+      line-height: 1.7;
+    }
+    .trigger-hint a { color: var(--blue); text-decoration: none; }
+    .trigger-hint a:hover { text-decoration: underline; }
 
     /* ── CSV links ── */
     .csv-list {
@@ -274,7 +353,6 @@
       color: inherit;
       transition: border-color 0.2s, background 0.2s;
     }
-
     .csv-row:hover { border-color: rgba(0,229,160,0.4); background: var(--card); }
 
     .csv-badge {
@@ -288,150 +366,8 @@
       font-weight: 600;
       letter-spacing: 1px;
     }
-
     .csv-path { font-size: 12px; color: var(--text); }
     .csv-desc { font-size: 10px; color: var(--muted); margin-left: auto; }
-
-    /* ── Nota da extensão ── */
-    .ext-note {
-      background: var(--surface);
-      border: 1px solid rgba(59,130,246,0.25);
-      border-radius: 10px;
-      padding: 16px 20px;
-      margin-bottom: 36px;
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-    }
-
-    .ext-icon {
-      font-size: 20px;
-      line-height: 1;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .ext-body { font-size: 11px; color: var(--muted); line-height: 1.7; }
-    .ext-body strong { color: var(--blue); font-weight: 600; }
-
-    /* ── Painel de execução manual ── */
-    .trigger-panel {
-      background: var(--surface);
-      border: 1px solid rgba(59,130,246,0.2);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 36px;
-    }
-
-    .trigger-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border);
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .trigger-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--blue);
-      font-weight: 600;
-    }
-
-    .trigger-body {
-      padding: 16px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .field-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .field-label {
-      font-size: 10px;
-      color: var(--muted);
-      white-space: nowrap;
-      min-width: 80px;
-    }
-
-    .field-input {
-      flex: 1;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 7px 12px;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .field-input:focus { border-color: rgba(59,130,246,0.5); }
-    .field-input::placeholder { color: var(--muted2); }
-
-    .trigger-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .run-btn {
-      background: rgba(59,130,246,0.12);
-      border: 1px solid rgba(59,130,246,0.35);
-      color: var(--blue);
-      padding: 8px 20px;
-      border-radius: 7px;
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .run-btn:hover:not(:disabled) {
-      background: rgba(59,130,246,0.22);
-      border-color: rgba(59,130,246,0.6);
-    }
-
-    .run-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-
-    .run-btn.running { color: var(--warn); border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.08); }
-    .run-btn.success { color: var(--accent); border-color: rgba(0,229,160,0.4); background: rgba(0,229,160,0.08); }
-    .run-btn.fail    { color: var(--danger); border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); }
-
-    .trigger-msg {
-      font-size: 11px;
-      color: var(--muted);
-      transition: color 0.2s;
-    }
-
-    .trigger-msg.ok     { color: var(--accent); }
-    .trigger-msg.err    { color: var(--danger); }
-    .trigger-msg.warn   { color: var(--warn); }
-
-    .trigger-hint {
-      font-size: 10px;
-      color: var(--muted);
-      padding: 10px 20px;
-      border-top: 1px solid var(--border);
-      line-height: 1.6;
-    }
-
-    .trigger-hint a { color: var(--blue); text-decoration: none; }
-    .trigger-hint a:hover { text-decoration: underline; }
 
     /* ── Footer ── */
     footer {
@@ -444,7 +380,6 @@
       flex-wrap: wrap;
       gap: 12px;
     }
-
     footer span { font-size: 10px; color: var(--muted); }
 
     .refresh-btn {
@@ -458,18 +393,9 @@
       cursor: pointer;
       transition: all 0.2s;
     }
+    .refresh-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+    .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .refresh-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .refresh-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* ── Spinner inline ── */
     .spinner {
       display: inline-block;
       width: 10px; height: 10px;
@@ -480,8 +406,26 @@
       vertical-align: middle;
       margin-right: 5px;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    .schedules {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 36px;
+    }
+    .schedule-chip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .schedule-chip.first {
+      border-color: rgba(0,229,160,0.3);
+      color: var(--accent);
+    }
   </style>
 </head>
 <body>
@@ -502,7 +446,6 @@
   <!-- Ativos -->
   <div class="section-label">Ativos disponíveis</div>
   <div class="assets-grid" id="assets-grid">
-    <!-- Skeletons enquanto carrega -->
     <div class="asset-card loading"><div class="asset-ticker"><span class="skeleton" style="width:40px;height:14px"></span></div><div class="asset-status"><span class="skeleton"></span></div></div>
     <div class="asset-card loading"><div class="asset-ticker"><span class="skeleton" style="width:40px;height:14px"></span></div><div class="asset-status"><span class="skeleton"></span></div></div>
     <div class="asset-card loading"><div class="asset-ticker"><span class="skeleton" style="width:40px;height:14px"></span></div><div class="asset-status"><span class="skeleton"></span></div></div>
@@ -514,17 +457,30 @@
   <div class="section-label">Última execução do robô</div>
   <div class="info-box" id="last-run-box">
     <div class="info-row">
-      <span class="info-label"><span class="spinner"></span>Carregando dados...</span>
+      <span class="info-label"><span class="spinner"></span>Carregando...</span>
       <span class="info-value"></span>
     </div>
   </div>
 
+  <!-- Horários -->
+  <div class="section-label">Execuções automáticas (Brasília — seg a sex)</div>
+  <div class="schedules">
+    <div class="schedule-chip first">10:30 ★</div>
+    <div class="schedule-chip">11:30</div>
+    <div class="schedule-chip">12:30</div>
+    <div class="schedule-chip">13:30</div>
+    <div class="schedule-chip">14:30</div>
+    <div class="schedule-chip">15:30</div>
+    <div class="schedule-chip">16:30</div>
+    <div class="schedule-chip">17:30</div>
+  </div>
+
   <!-- Execução manual -->
-  <div class="section-label">Execução manual</div>
+  <div class="section-label">Execução manual (teste)</div>
   <div class="trigger-panel">
     <div class="trigger-header">
-      <div class="trigger-title">⚡ Disparar GitHub Actions agora</div>
-      <span style="font-size:10px;color:var(--muted)">Requer token com permissão <code>workflow</code></span>
+      <div class="trigger-title">⚡ Disparar robô agora via GitHub Actions</div>
+      <div class="trigger-sub">Token salvo só no seu navegador — nunca enviado a nenhum servidor</div>
     </div>
     <div class="trigger-body">
       <div class="field-row">
@@ -535,7 +491,7 @@
       <div class="field-row">
         <span class="field-label">Token GitHub</span>
         <input class="field-input" id="gh-token" type="password"
-          placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+          placeholder="github_pat_..." autocomplete="off" spellcheck="false">
       </div>
       <div class="trigger-actions">
         <button class="run-btn" id="run-btn" onclick="triggerWorkflow()">
@@ -544,15 +500,15 @@
         </button>
         <span class="trigger-msg" id="trigger-msg"></span>
       </div>
+      <div class="trigger-log" id="trigger-log"></div>
     </div>
     <div class="trigger-hint">
-      Token e repositório são salvos apenas no <strong>localStorage</strong> do seu navegador — nunca enviados para nenhum servidor nosso.<br>
-      Crie o token em: <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a>
-      — marque apenas o escopo <code>workflow</code>. O robô leva ~3–5 min para concluir.
+      Gere o token em: <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a>
+      → <strong>Generate new token (classic)</strong> → marque apenas o escopo <code>workflow</code> → copie e cole acima.
     </div>
   </div>
 
-  <!-- Download direto dos CSVs -->
+  <!-- CSVs -->
   <div class="section-label">Download dos arquivos CSV</div>
   <div class="csv-list">
     <a class="csv-row" href="cboe/spx_quotedata.csv" download>
@@ -582,328 +538,331 @@
     </a>
   </div>
 
-  <!-- Nota extensão -->
-  <div class="ext-note">
-    <div class="ext-icon">🧩</div>
-    <div class="ext-body">
-      <strong>Download manual via Extensão Chrome</strong><br>
-      Use a extensão <strong>VINSC CBOE Downloader</strong> para baixar os arquivos diretamente do seu navegador.
-      Ela simula a navegação humana na CBOE (delays aleatórios, cliques reais) e dispara o download
-      nativo — sem servidor, sem API, sem bloqueio.<br>
-      Após o download, mova os CSVs para a pasta <code>public/cboe/</code> e faça commit no repositório.
-    </div>
-  </div>
-
   <footer>
     <span>VINSC Invest — CBOE Data Feed &copy; 2025</span>
-    <button class="refresh-btn" id="refresh-btn" onclick="init()">↻ Atualizar</button>
+    <button class="refresh-btn" id="refresh-btn" onclick="init()">↻ Atualizar status</button>
   </footer>
 
 </div>
 
 <script>
-  const ASSETS = ['spx', 'spy', 'ndx', 'qqq', 'vix'];
-  // Caminhos relativos — funciona no GitHub Pages, Netlify, ou qualquer static host
-  const CSV_BASE    = 'cboe/';
-  const LAST_RUN    = 'cboe/last_run.json';
+const ASSETS   = ['spx','spy','ndx','qqq','vix'];
+const CSV_BASE = 'cboe/';
+const LAST_RUN = 'cboe/last_run.json';
 
-  // ── Utilitários ──────────────────────────────────────────────────
-  function setStatus(state, text) {
-    const pill = document.getElementById('status-pill');
-    const dot  = document.getElementById('status-dot');
-    const txt  = document.getElementById('status-text');
-    pill.className = 'status-pill ' + state;
-    dot.className  = 'dot ' + state;
-    txt.textContent = text;
+// ── Persiste repo+token no localStorage ─────────────────────────
+const repoInput  = document.getElementById('gh-repo');
+const tokenInput = document.getElementById('gh-token');
+repoInput.value  = localStorage.getItem('gh_repo')  || '';
+tokenInput.value = localStorage.getItem('gh_token') || '';
+repoInput.addEventListener('input',  () => localStorage.setItem('gh_repo',  repoInput.value.trim()));
+tokenInput.addEventListener('input', () => localStorage.setItem('gh_token', tokenInput.value.trim()));
+
+// ── Helpers ──────────────────────────────────────────────────────
+function setStatus(state, text) {
+  const pill = document.getElementById('status-pill');
+  const dot  = document.getElementById('status-dot');
+  const txt  = document.getElementById('status-text');
+  pill.className = 'status-pill ' + state;
+  dot.className  = 'dot ' + state;
+  txt.textContent = text;
+}
+
+function fmtBytes(b) {
+  if (!b) return '—';
+  return b < 1024 ? b + ' B' : (b/1024).toFixed(1) + ' KB';
+}
+
+function fmtDateBR(iso) {
+  if (!iso) return '—';
+  try {
+    return new Date(iso).toLocaleString('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+      day:'2-digit', month:'2-digit', year:'numeric',
+      hour:'2-digit', minute:'2-digit', second:'2-digit'
+    });
+  } catch { return iso; }
+}
+
+function addLog(text, cls) {
+  const box = document.getElementById('trigger-log');
+  box.classList.add('visible');
+  const span = document.createElement('span');
+  span.className = cls || '';
+  span.textContent = text + '\n';
+  box.appendChild(span);
+  box.scrollTop = box.scrollHeight;
+}
+
+function clearLog() {
+  const box = document.getElementById('trigger-log');
+  box.innerHTML = '';
+  box.classList.remove('visible');
+}
+
+function setMsg(text, cls) {
+  const el = document.getElementById('trigger-msg');
+  el.className = 'trigger-msg ' + (cls || '');
+  el.innerHTML = text;
+}
+
+// ── Verifica CSV via HEAD ────────────────────────────────────────
+async function checkCSV(asset) {
+  try {
+    const r = await fetch(CSV_BASE + asset + '_quotedata.csv', { method:'HEAD', cache:'no-store' });
+    if (!r.ok) return { ok: false, size: 0 };
+    return { ok: true, size: parseInt(r.headers.get('content-length') || '0', 10) };
+  } catch {
+    return { ok: false, size: 0 };
   }
+}
 
-  function fmtBytes(bytes) {
-    if (!bytes) return '—';
-    if (bytes < 1024) return bytes + ' B';
-    return (bytes / 1024).toFixed(1) + ' KB';
-  }
+// ── Lê last_run.json ─────────────────────────────────────────────
+async function loadLastRun() {
+  try {
+    const r = await fetch(LAST_RUN + '?t=' + Date.now(), { cache:'no-store' });
+    if (!r.ok) return null;
+    return await r.json();
+  } catch { return null; }
+}
 
-  function fmtDateBR(isoString) {
-    if (!isoString) return '—';
-    try {
-      const d = new Date(isoString);
-      return d.toLocaleString('pt-BR', {
-        timeZone: 'America/Sao_Paulo',
-        day: '2-digit', month: '2-digit', year: 'numeric',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
-      });
-    } catch { return isoString; }
-  }
+// ── Renderiza cards ──────────────────────────────────────────────
+function renderAssets(results) {
+  document.getElementById('assets-grid').innerHTML = ASSETS.map(a => {
+    const r = results[a];
+    return `<div class="asset-card ${r.ok ? 'ok' : 'error'}">
+      <div class="asset-ticker">${a.toUpperCase()}</div>
+      <div class="asset-status">${r.ok ? '✓ disponível' : '✗ não encontrado'}</div>
+      ${r.ok && r.size ? `<div class="asset-size">${fmtBytes(r.size)}</div>` : ''}
+    </div>`;
+  }).join('');
+}
 
-  // ── Verifica cada CSV com HEAD (sem baixar o arquivo) ────────────
-  async function checkCSV(asset) {
-    const url = CSV_BASE + asset + '_quotedata.csv';
-    try {
-      const r = await fetch(url, { method: 'HEAD', cache: 'no-store' });
-      if (!r.ok) return { ok: false, size: 0 };
-      const size = parseInt(r.headers.get('content-length') || '0', 10);
-      return { ok: true, size };
-    } catch {
-      return { ok: false, size: 0 };
-    }
-  }
+// ── Renderiza última execução ────────────────────────────────────
+function renderLastRun(data) {
+  const box = document.getElementById('last-run-box');
 
-  // ── Lê last_run.json ─────────────────────────────────────────────
-  async function loadLastRun() {
-    try {
-      const r = await fetch(LAST_RUN + '?t=' + Date.now(), { cache: 'no-store' });
-      if (!r.ok) return null;
-      return await r.json();
-    } catch {
-      return null;
-    }
-  }
-
-  // ── Renderiza cards dos ativos ───────────────────────────────────
-  function renderAssets(results) {
-    const grid = document.getElementById('assets-grid');
-    grid.innerHTML = ASSETS.map(asset => {
-      const r = results[asset];
-      const state = r.ok ? 'ok' : 'error';
-      return `
-        <div class="asset-card ${state}">
-          <div class="asset-ticker">${asset.toUpperCase()}</div>
-          <div class="asset-status">${r.ok ? '✓ disponível' : '✗ não encontrado'}</div>
-          ${r.ok && r.size ? `<div class="asset-size">${fmtBytes(r.size)}</div>` : ''}
-        </div>`;
-    }).join('');
-  }
-
-  // ── Renderiza box de última execução ─────────────────────────────
-  function renderLastRun(data) {
-    const box = document.getElementById('last-run-box');
-
-    // Arquivo existe mas robô ainda não rodou
-    if (!data || data.robot_not_run_yet) {
-      box.innerHTML = `
-        <div class="info-row">
-          <span class="info-label">Status</span>
-          <span class="info-value warn">⏳ Robô ainda não executou</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Próxima execução</span>
-          <span class="info-value">GitHub Actions: 10:30, 11:30, 12:30... (Brasília)</span>
-        </div>`;
-      return;
-    }
-
-    // Dados reais da execução
-    const ok    = data.success_count ?? '—';
-    const total = data.total ?? ASSETS.length;
-    const allOk = ok === total;
-
-    let html = `
+  if (!data || data.robot_not_run_yet) {
+    box.innerHTML = `
       <div class="info-row">
-        <span class="info-label">Data / hora (Brasília)</span>
-        <span class="info-value green">${data.timestamp_br || fmtDateBR(data.timestamp) || '—'}</span>
+        <span class="info-label">Status</span>
+        <span class="info-value warn">⏳ Robô ainda não executou</span>
       </div>
       <div class="info-row">
-        <span class="info-label">Resultado geral</span>
-        <span class="info-value ${allOk ? 'green' : 'warn'}">${ok}/${total} ativos baixados</span>
+        <span class="info-label">Dica</span>
+        <span class="info-value">Use o botão abaixo para testar agora</span>
       </div>`;
-
-    if (data.duration_seconds != null) {
-      html += `
-      <div class="info-row">
-        <span class="info-label">Duração</span>
-        <span class="info-value">${data.duration_seconds}s</span>
-      </div>`;
-    }
-
-    // Resultado por ativo
-    if (data.results) {
-      Object.entries(data.results).forEach(([asset, r]) => {
-        const green = r.success;
-        html += `
-        <div class="info-row">
-          <span class="info-label">${asset.toUpperCase()}</span>
-          <span class="info-value ${green ? 'green' : 'danger'}">
-            ${green
-              ? `✓ ${r.lines != null ? r.lines + ' linhas' : 'ok'}`
-              : '✗ ' + (r.error || 'erro desconhecido')}
-          </span>
-        </div>`;
-      });
-    }
-
-    box.innerHTML = html;
+    return;
   }
 
-  // ── Config persistida no localStorage ───────────────────────────
-  const repoInput  = document.getElementById('gh-repo');
-  const tokenInput = document.getElementById('gh-token');
+  const ok    = data.success_count ?? '—';
+  const total = data.total ?? ASSETS.length;
+  const allOk = ok === total;
 
-  repoInput.value  = localStorage.getItem('gh_repo')  || '';
-  tokenInput.value = localStorage.getItem('gh_token') || '';
+  let html = `
+    <div class="info-row">
+      <span class="info-label">Data / hora (Brasília)</span>
+      <span class="info-value green">${data.timestamp_br || fmtDateBR(data.timestamp) || '—'}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Resultado geral</span>
+      <span class="info-value ${allOk ? 'green' : 'warn'}">${ok}/${total} ativos baixados</span>
+    </div>`;
 
-  repoInput.addEventListener('input',  () => localStorage.setItem('gh_repo',  repoInput.value.trim()));
-  tokenInput.addEventListener('input', () => localStorage.setItem('gh_token', tokenInput.value.trim()));
+  if (data.duration_seconds != null) {
+    html += `<div class="info-row">
+      <span class="info-label">Duração</span>
+      <span class="info-value">${data.duration_seconds}s</span>
+    </div>`;
+  }
 
-  // ── Disparar workflow_dispatch ───────────────────────────────────
-  async function triggerWorkflow() {
-    const repo  = repoInput.value.trim();
-    const token = tokenInput.value.trim();
-    const btn   = document.getElementById('run-btn');
-    const icon  = document.getElementById('run-icon');
-    const label = document.getElementById('run-label');
-    const msg   = document.getElementById('trigger-msg');
+  if (data.results) {
+    Object.entries(data.results).forEach(([asset, r]) => {
+      html += `<div class="info-row">
+        <span class="info-label">${asset.toUpperCase()}</span>
+        <span class="info-value ${r.success ? 'green' : 'danger'}">
+          ${r.success ? `✓ ${r.lines != null ? r.lines + ' linhas' : 'ok'}` : '✗ ' + (r.error || 'erro')}
+        </span>
+      </div>`;
+    });
+  }
 
-    if (!repo || !repo.includes('/')) {
-      msg.className = 'trigger-msg err';
-      msg.textContent = '✗ Repositório inválido (use: usuario/repo)';
-      return;
-    }
-    if (!token || !token.startsWith('gh')) {
-      msg.className = 'trigger-msg err';
-      msg.textContent = '✗ Token inválido — deve começar com "gh"';
-      return;
-    }
+  box.innerHTML = html;
+}
 
-    // Estado: rodando
-    btn.disabled = true;
-    btn.className = 'run-btn running';
-    icon.textContent = '⏳';
-    label.textContent = 'Disparando...';
-    msg.className = 'trigger-msg warn';
-    msg.textContent = 'Enviando requisição para o GitHub...';
+// ── Dispara workflow ─────────────────────────────────────────────
+async function triggerWorkflow() {
+  const repo  = repoInput.value.trim();
+  const token = tokenInput.value.trim();
+  const btn   = document.getElementById('run-btn');
+  const icon  = document.getElementById('run-icon');
+  const label = document.getElementById('run-label');
 
-    try {
-      // Descobre o ID do workflow pelo nome do arquivo
-      const wfRes = await fetch(`https://api.github.com/repos/${repo}/actions/workflows`, {
-        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
-      });
+  clearLog();
 
-      if (!wfRes.ok) {
-        const e = await wfRes.json().catch(() => ({}));
-        throw new Error(e.message || `HTTP ${wfRes.status}`);
+  // Validações
+  if (!repo) {
+    setMsg('✗ Preencha o campo Repositório (ex: joao/vinsc-cboe)', 'err');
+    repoInput.focus();
+    return;
+  }
+  if (!repo.includes('/')) {
+    setMsg('✗ Formato inválido — use: usuario/vinsc-cboe', 'err');
+    repoInput.focus();
+    return;
+  }
+  if (!token) {
+    setMsg('✗ Cole seu token GitHub no campo acima', 'err');
+    tokenInput.focus();
+    return;
+  }
+
+  // Estado running
+  btn.disabled = true;
+  btn.className = 'run-btn running';
+  icon.textContent = '⏳';
+  label.textContent = 'Disparando...';
+  setMsg('Conectando ao GitHub...', 'warn');
+
+  try {
+    // Passo 1: Lista workflows do repo
+    addLog('→ Buscando workflows em ' + repo + '...', '');
+    const wfRes = await fetch(`https://api.github.com/repos/${repo}/actions/workflows`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
       }
+    });
 
-      const wfData = await wfRes.json();
-      // Procura pelo workflow cboe-downloader.yml
-      const wf = wfData.workflows?.find(w =>
-        w.path?.includes('cboe-downloader') || w.name?.toLowerCase().includes('cboe')
-      );
+    if (wfRes.status === 401) throw new Error('Token inválido ou expirado (401 Unauthorized)');
+    if (wfRes.status === 403) throw new Error('Token sem permissão workflow (403 Forbidden)');
+    if (wfRes.status === 404) throw new Error('Repositório não encontrado — confira o nome exato');
+    if (!wfRes.ok) throw new Error(`Erro ao listar workflows: HTTP ${wfRes.status}`);
 
-      if (!wf) throw new Error('Workflow cboe-downloader.yml não encontrado no repositório');
+    const wfData = await wfRes.json();
+    const workflows = wfData.workflows || [];
 
-      // Dispara o workflow
-      const dispatchRes = await fetch(
-        `https://api.github.com/repos/${repo}/actions/workflows/${wf.id}/dispatches`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/vnd.github+json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ ref: 'main', inputs: { reason: 'Disparo manual via dashboard' } })
-        }
-      );
+    addLog('✓ ' + workflows.length + ' workflow(s) encontrado(s)', 'ok');
+    workflows.forEach(w => addLog('  • ' + w.name + ' (' + w.path + ')', ''));
 
-      if (dispatchRes.status === 204 || dispatchRes.ok) {
-        // Sucesso (204 No Content é o esperado)
-        btn.className = 'run-btn success';
-        icon.textContent = '✓';
-        label.textContent = 'Disparado!';
-        msg.className = 'trigger-msg ok';
-        msg.textContent = '✓ Workflow iniciado — leva ~3–5 min. Atualize a página depois.';
+    // Passo 2: Acha o workflow certo
+    const wf = workflows.find(w =>
+      w.path?.includes('cboe-downloader') ||
+      w.path?.includes('cboe') ||
+      w.name?.toLowerCase().includes('cboe')
+    );
 
-        // Link direto para o Actions
-        setTimeout(() => {
-          msg.innerHTML = `✓ Disparado! <a href="https://github.com/${repo}/actions" target="_blank" style="color:var(--blue)">Ver execução →</a>`;
-        }, 1500);
+    if (!wf) {
+      addLog('Workflows disponíveis: ' + workflows.map(w => w.name).join(', '), 'warn');
+      throw new Error('Workflow cboe-downloader.yml não encontrado. Verifique se existe em .github/workflows/');
+    }
 
-        // Reset do botão após 30s
-        setTimeout(() => {
-          btn.disabled = false;
-          btn.className = 'run-btn';
-          icon.textContent = '▶';
-          label.textContent = 'Executar robô agora';
-        }, 30000);
+    addLog('✓ Workflow selecionado: ' + wf.name, 'ok');
+    setMsg('Disparando workflow...', 'warn');
 
-      } else {
-        const e = await dispatchRes.json().catch(() => ({}));
-        throw new Error(e.message || `HTTP ${dispatchRes.status}`);
+    // Passo 3: Dispara o workflow_dispatch
+    const dispatchRes = await fetch(
+      `https://api.github.com/repos/${repo}/actions/workflows/${wf.id}/dispatches`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ref: 'main',
+          inputs: { reason: 'Disparo manual via dashboard VINSC' }
+        })
       }
+    );
 
-    } catch (err) {
-      btn.disabled = false;
-      btn.className = 'run-btn fail';
-      icon.textContent = '✗';
-      label.textContent = 'Falhou';
-      msg.className = 'trigger-msg err';
-      msg.textContent = '✗ ' + err.message;
+    // 204 = sucesso (GitHub não retorna body)
+    if (dispatchRes.status === 204) {
+      addLog('✓ Workflow disparado com sucesso!', 'ok');
+      addLog('  O robô leva ~3–5 min para concluir.', '');
+      addLog('  Após concluir, atualize esta página para ver os novos dados.', '');
 
+      btn.className = 'run-btn success';
+      icon.textContent = '✓';
+      label.textContent = 'Disparado!';
+      setMsg(`✓ Robô iniciado! <a href="https://github.com/${repo}/actions" target="_blank">Acompanhar execução →</a>`, 'ok');
+
+      // Reset do botão após 60s
       setTimeout(() => {
+        btn.disabled = false;
         btn.className = 'run-btn';
         icon.textContent = '▶';
         label.textContent = 'Executar robô agora';
-      }, 5000);
-    }
-  }
+      }, 60000);
 
-  // ── Main ─────────────────────────────────────────────────────────
-  async function init() {
-    const btn = document.getElementById('refresh-btn');
-    btn.disabled = true;
-    btn.textContent = '↻ verificando...';
-
-    setStatus('loading', 'verificando...');
-
-    // Restaura skeletons
-    document.getElementById('assets-grid').innerHTML = ASSETS.map(() => `
-      <div class="asset-card loading">
-        <div class="asset-ticker"><span class="skeleton" style="width:40px;height:14px"></span></div>
-        <div class="asset-status"><span class="skeleton"></span></div>
-      </div>`).join('');
-
-    document.getElementById('last-run-box').innerHTML = `
-      <div class="info-row">
-        <span class="info-label"><span class="spinner"></span>Carregando dados...</span>
-        <span class="info-value"></span>
-      </div>`;
-
-    // Roda checks em paralelo
-    const [csvResults, lastRun] = await Promise.all([
-      // Checa todos os CSVs simultaneamente
-      Promise.all(ASSETS.map(async a => {
-        const r = await checkCSV(a);
-        return [a, r];
-      })).then(entries => Object.fromEntries(entries)),
-
-      loadLastRun()
-    ]);
-
-    // Renderiza
-    renderAssets(csvResults);
-    renderLastRun(lastRun);
-
-    // Status global
-    const anyOk = Object.values(csvResults).some(r => r.ok);
-    const allOk = Object.values(csvResults).every(r => r.ok);
-
-    if (allOk) {
-      setStatus('ok', 'operacional');
-    } else if (anyOk) {
-      setStatus('ok', 'parcial');
+    } else if (dispatchRes.status === 422) {
+      throw new Error('Branch "main" não encontrada. Confira se o branch principal é "main" ou "master"');
     } else {
-      setStatus('error', 'sem dados');
+      const body = await dispatchRes.json().catch(() => ({}));
+      throw new Error(body.message || `Erro ao disparar: HTTP ${dispatchRes.status}`);
     }
 
+  } catch (err) {
+    addLog('✗ ' + err.message, 'err');
+    setMsg('✗ ' + err.message, 'err');
     btn.disabled = false;
-    btn.textContent = '↻ Atualizar';
+    btn.className = 'run-btn fail';
+    icon.textContent = '✗';
+    label.textContent = 'Falhou';
+
+    setTimeout(() => {
+      btn.className = 'run-btn';
+      icon.textContent = '▶';
+      label.textContent = 'Executar robô agora';
+    }, 6000);
   }
+}
 
-  // Inicia ao carregar
-  init();
+// ── Status geral ─────────────────────────────────────────────────
+async function init() {
+  const btn = document.getElementById('refresh-btn');
+  btn.disabled = true;
+  btn.textContent = '↻ verificando...';
+  setStatus('loading', 'verificando...');
 
-  // Auto-refresh a cada 5 minutos
-  setInterval(init, 5 * 60 * 1000);
+  // Skeletons
+  document.getElementById('assets-grid').innerHTML = ASSETS.map(() => `
+    <div class="asset-card loading">
+      <div class="asset-ticker"><span class="skeleton" style="width:40px;height:14px"></span></div>
+      <div class="asset-status"><span class="skeleton"></span></div>
+    </div>`).join('');
+
+  document.getElementById('last-run-box').innerHTML = `
+    <div class="info-row">
+      <span class="info-label"><span class="spinner"></span>Carregando...</span>
+      <span class="info-value"></span>
+    </div>`;
+
+  const [csvResults, lastRun] = await Promise.all([
+    Promise.all(ASSETS.map(async a => [a, await checkCSV(a)]))
+      .then(entries => Object.fromEntries(entries)),
+    loadLastRun()
+  ]);
+
+  renderAssets(csvResults);
+  renderLastRun(lastRun);
+
+  const anyOk = Object.values(csvResults).some(r => r.ok);
+  const allOk = Object.values(csvResults).every(r => r.ok);
+
+  if (allOk)       setStatus('ok',    'operacional');
+  else if (anyOk)  setStatus('ok',    'parcial');
+  else             setStatus('error', 'sem dados');
+
+  btn.disabled = false;
+  btn.textContent = '↻ Atualizar status';
+}
+
+init();
+setInterval(init, 5 * 60 * 1000);
 </script>
 </body>
 </html>
