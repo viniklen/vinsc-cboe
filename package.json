@@ -5,16 +5,10 @@
   "main": "src/cboe-robot.js",
   "scripts": {
     "start": "node src/cboe-robot.js",
-    "robot": "node src/cboe-robot.js",
-    "dev": "netlify dev",
-    "test:robot": "node src/cboe-robot.js",
-    "test:api": "netlify dev &"
+    "robot": "node src/cboe-robot.js"
   },
   "dependencies": {
     "playwright": "^1.44.0"
-  },
-  "devDependencies": {
-    "netlify-cli": "^17.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
