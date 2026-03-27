@@ -1,0 +1,76 @@
+# VINSC INVEST — CBOE Auto Downloader
+# Roda de segunda a sexta, das 10:30 às 17:30 (horário Brasil = UTC-3)
+# GitHub Actions usa UTC — Brasil UTC-3 → +3h
+
+name: CBOE Data Downloader
+
+on:
+  schedule:
+    # Toda hora no :30 — seg a sex — cobre 10:30 até 10:30 do dia seguinte (24h)
+    # GitHub Actions usa UTC. Brasil = UTC-3, mas o cron cobre todas as horas
+    - cron: '30 * * * 1-5'
+
+  # Permite rodar manualmente pelo dashboard ou pelo painel GitHub
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Motivo da execução manual (opcional)'
+        required: false
+        default: 'Execução manual'
+
+jobs:
+  download-cboe:
+    name: Baixar CSVs da CBOE
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Instalar Playwright + Chromium
+        run: npx playwright install chromium --with-deps
+
+      - name: Executar robô CBOE
+        run: node src/cboe-robot.js
+
+      - name: Commitar e publicar CSVs
+        run: |
+          git config user.name "cboe-robot[bot]"
+          git config user.email "cboe-robot@vinsc.com"
+          git add public/cboe/
+          git diff --staged --quiet || git commit -m "🤖 CBOE update — $(TZ='America/Sao_Paulo' date '+%d/%m/%Y %H:%M') BRT"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Salvar CSVs como artefato (backup 7 dias)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cboe-csvs-${{ github.run_id }}
+          path: public/cboe/*.csv
+          retention-days: 7
+
+      - name: Mostrar resultado
+        if: always()
+        run: |
+          echo "=== Resultado ==="
+          cat public/cboe/last_run.json 2>/dev/null || echo "Log não encontrado"
+          echo ""
+          echo "=== Arquivos ==="
+          ls -lh public/cboe/*.csv 2>/dev/null || echo "Nenhum CSV"
