@@ -3,233 +3,440 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VINSC — CBOE Data Service</title>
+  <title>VINSC — CBOE Data Feed</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0a0c10;
-      --surface: #12151c;
-      --border: #1e2330;
-      --accent: #00e5a0;
-      --accent2: #3b82f6;
-      --warn: #f59e0b;
-      --danger: #ef4444;
-      --text: #e2e8f0;
-      --muted: #64748b;
-      --mono: 'IBM Plex Mono', monospace;
-      --sans: 'Syne', sans-serif;
+      --bg:      #080a0f;
+      --surface: #0e1118;
+      --card:    #111520;
+      --border:  #1c2235;
+      --accent:  #00e5a0;
+      --blue:    #3b82f6;
+      --warn:    #f59e0b;
+      --danger:  #ef4444;
+      --text:    #dde4f0;
+      --muted:   #4a566e;
+      --muted2:  #2e3a50;
+      --mono:    'IBM Plex Mono', monospace;
+      --sans:    'Syne', sans-serif;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background: var(--bg);
       color: var(--text);
       font-family: var(--mono);
-      font-size: 14px;
-      line-height: 1.6;
+      font-size: 13px;
+      line-height: 1.65;
       min-height: 100vh;
     }
 
-    /* Grid de fundo */
+    /* ── Fundo animado ── */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
       background-image:
-        linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
+        linear-gradient(rgba(0,229,160,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,160,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
       pointer-events: none;
       z-index: 0;
     }
 
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 40px 20px;
+    /* ── Brilho de canto ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0,229,160,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
 
-    /* Header */
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 44px 24px 64px;
+    }
+
+    /* ── Header ── */
     header {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 48px;
+      margin-bottom: 52px;
       flex-wrap: wrap;
       gap: 16px;
     }
 
-    .brand {
-      font-family: var(--sans);
-    }
-
     .brand-name {
-      font-size: 28px;
+      font-family: var(--sans);
+      font-size: 30px;
       font-weight: 800;
       color: var(--accent);
-      letter-spacing: -0.5px;
+      letter-spacing: -1px;
       line-height: 1;
     }
 
     .brand-sub {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--muted);
-      font-family: var(--mono);
-      margin-top: 4px;
+      margin-top: 5px;
+      letter-spacing: 0.5px;
     }
 
-    .status-badge {
+    /* ── Badge de status global ── */
+    .status-pill {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 14px;
+      padding: 7px 14px;
       border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-family: var(--mono);
       background: var(--surface);
+      transition: border-color 0.3s;
     }
+
+    .status-pill.ok    { border-color: rgba(0,229,160,0.35); }
+    .status-pill.error { border-color: rgba(239,68,68,0.35); }
+    .status-pill.loading { border-color: var(--border); }
 
     .dot {
-      width: 8px;
-      height: 8px;
+      width: 7px; height: 7px;
       border-radius: 50%;
       background: var(--muted);
-      animation: pulse 2s infinite;
+      flex-shrink: 0;
+    }
+    .dot.ok      { background: var(--accent); animation: blink 2s ease-in-out infinite; }
+    .dot.error   { background: var(--danger); }
+    .dot.loading { background: var(--warn);   animation: blink 1s ease-in-out infinite; }
+
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.3; }
     }
 
-    .dot.online { background: var(--accent); }
-    .dot.error { background: var(--danger); animation: none; }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    /* Cards */
-    .section-title {
+    /* ── Section title ── */
+    .section-label {
       font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 2px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
       text-transform: uppercase;
       color: var(--muted);
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
-    .grid {
+    /* ── Grid de ativos ── */
+    .assets-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
-      margin-bottom: 32px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    @media (max-width: 620px) {
+      .assets-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
     .asset-card {
-      background: var(--surface);
+      background: var(--card);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 16px;
-      transition: border-color 0.2s;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
-      display: block;
+      padding: 16px 14px;
+      transition: border-color 0.25s, transform 0.15s;
+      cursor: default;
+      position: relative;
+      overflow: hidden;
     }
 
-    .asset-card:hover { border-color: var(--accent); }
-    .asset-card.ok { border-color: rgba(0,229,160,0.3); }
-    .asset-card.error { border-color: rgba(239,68,68,0.3); }
+    .asset-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--muted2);
+      transition: background 0.3s;
+    }
+
+    .asset-card.ok::before    { background: var(--accent); }
+    .asset-card.error::before { background: var(--danger); }
+    .asset-card.loading::before { background: var(--warn); animation: shimmer 1.5s infinite; }
+
+    @keyframes shimmer {
+      0%,100% { opacity: 0.4; }
+      50%      { opacity: 1; }
+    }
+
+    .asset-card.ok    { border-color: rgba(0,229,160,0.2); }
+    .asset-card.error { border-color: rgba(239,68,68,0.2); }
 
     .asset-ticker {
       font-family: var(--sans);
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 800;
+      line-height: 1;
       margin-bottom: 8px;
+      color: var(--muted);
+      transition: color 0.3s;
     }
 
-    .asset-card.ok .asset-ticker { color: var(--accent); }
+    .asset-card.ok    .asset-ticker { color: var(--accent); }
     .asset-card.error .asset-ticker { color: var(--danger); }
 
-    .asset-meta {
-      font-size: 11px;
+    .asset-status {
+      font-size: 10px;
       color: var(--muted);
+      line-height: 1.4;
     }
 
     .asset-size {
       font-size: 11px;
-      margin-top: 4px;
+      color: var(--text);
+      margin-top: 6px;
     }
 
-    /* Info box */
+    /* Skeleton loader */
+    .skeleton {
+      display: inline-block;
+      width: 60px; height: 10px;
+      background: linear-gradient(90deg, var(--border) 25%, var(--muted2) 50%, var(--border) 75%);
+      background-size: 200% 100%;
+      border-radius: 4px;
+      animation: skeleton-wave 1.5s infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes skeleton-wave {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── Info box (última execução) ── */
     .info-box {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 20px 24px;
-      margin-bottom: 24px;
+      overflow: hidden;
+      margin-bottom: 36px;
     }
 
     .info-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 0;
+      padding: 11px 20px;
       border-bottom: 1px solid var(--border);
       gap: 16px;
     }
 
     .info-row:last-child { border-bottom: none; }
 
-    .info-label { color: var(--muted); font-size: 12px; }
-    .info-value { color: var(--text); text-align: right; font-size: 12px; }
-    .info-value.green { color: var(--accent); }
-    .info-value.warn { color: var(--warn); }
+    .info-label { color: var(--muted); font-size: 11px; white-space: nowrap; }
 
-    /* Endpoints */
-    .endpoint-list {
+    .info-value {
+      color: var(--text);
+      font-size: 11px;
+      text-align: right;
+    }
+    .info-value.green  { color: var(--accent); }
+    .info-value.warn   { color: var(--warn); }
+    .info-value.danger { color: var(--danger); }
+
+    /* ── CSV links ── */
+    .csv-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-bottom: 32px;
+      gap: 7px;
+      margin-bottom: 36px;
     }
 
-    .endpoint {
+    .csv-row {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 12px 16px;
+      padding: 11px 16px;
       display: flex;
       align-items: center;
       gap: 12px;
       text-decoration: none;
       color: inherit;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .csv-row:hover { border-color: rgba(0,229,160,0.4); background: var(--card); }
+
+    .csv-badge {
+      flex-shrink: 0;
+      background: rgba(0,229,160,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(0,229,160,0.25);
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .csv-path { font-size: 12px; color: var(--text); }
+    .csv-desc { font-size: 10px; color: var(--muted); margin-left: auto; }
+
+    /* ── Nota da extensão ── */
+    .ext-note {
+      background: var(--surface);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 36px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .ext-icon {
+      font-size: 20px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .ext-body { font-size: 11px; color: var(--muted); line-height: 1.7; }
+    .ext-body strong { color: var(--blue); font-weight: 600; }
+
+    /* ── Painel de execução manual ── */
+    .trigger-panel {
+      background: var(--surface);
+      border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 36px;
+    }
+
+    .trigger-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .trigger-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .trigger-body {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .field-label {
+      font-size: 10px;
+      color: var(--muted);
+      white-space: nowrap;
+      min-width: 80px;
+    }
+
+    .field-input {
+      flex: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text);
+      outline: none;
       transition: border-color 0.2s;
     }
 
-    .endpoint:hover { border-color: var(--accent2); }
+    .field-input:focus { border-color: rgba(59,130,246,0.5); }
+    .field-input::placeholder { color: var(--muted2); }
 
-    .method {
-      background: rgba(59,130,246,0.15);
-      color: var(--accent2);
-      border: 1px solid rgba(59,130,246,0.3);
-      border-radius: 4px;
-      padding: 2px 8px;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      flex-shrink: 0;
+    .trigger-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .ep-url { color: var(--text); font-size: 13px; }
-    .ep-desc { color: var(--muted); font-size: 11px; margin-left: auto; }
+    .run-btn {
+      background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(59,130,246,0.35);
+      color: var(--blue);
+      padding: 8px 20px;
+      border-radius: 7px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
 
-    /* Footer */
+    .run-btn:hover:not(:disabled) {
+      background: rgba(59,130,246,0.22);
+      border-color: rgba(59,130,246,0.6);
+    }
+
+    .run-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .run-btn.running { color: var(--warn); border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.08); }
+    .run-btn.success { color: var(--accent); border-color: rgba(0,229,160,0.4); background: rgba(0,229,160,0.08); }
+    .run-btn.fail    { color: var(--danger); border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); }
+
+    .trigger-msg {
+      font-size: 11px;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+
+    .trigger-msg.ok     { color: var(--accent); }
+    .trigger-msg.err    { color: var(--danger); }
+    .trigger-msg.warn   { color: var(--warn); }
+
+    .trigger-hint {
+      font-size: 10px;
+      color: var(--muted);
+      padding: 10px 20px;
+      border-top: 1px solid var(--border);
+      line-height: 1.6;
+    }
+
+    .trigger-hint a { color: var(--blue); text-decoration: none; }
+    .trigger-hint a:hover { text-decoration: underline; }
+
+    /* ── Footer ── */
     footer {
       margin-top: 48px;
-      padding-top: 24px;
+      padding-top: 20px;
       border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
@@ -238,7 +445,7 @@
       gap: 12px;
     }
 
-    footer span { font-size: 11px; color: var(--muted); }
+    footer span { font-size: 10px; color: var(--muted); }
 
     .refresh-btn {
       background: transparent;
@@ -247,189 +454,456 @@
       padding: 6px 14px;
       border-radius: 6px;
       font-family: var(--mono);
-      font-size: 12px;
+      font-size: 11px;
       cursor: pointer;
       transition: all 0.2s;
     }
 
-    .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* Loading state */
-    .loading { color: var(--muted); font-size: 12px; }
-
-    @media (max-width: 600px) {
-      .grid { grid-template-columns: repeat(2, 1fr); }
-      .ep-desc { display: none; }
+    .refresh-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
     }
+
+    .refresh-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* ── Spinner inline ── */
+    .spinner {
+      display: inline-block;
+      width: 10px; height: 10px;
+      border: 1.5px solid var(--muted2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
-<div class="container">
+<div class="wrap">
 
+  <!-- Header -->
   <header>
     <div class="brand">
       <div class="brand-name">VINSC</div>
       <div class="brand-sub">CBOE Data Service // Options Chain Feed</div>
     </div>
-    <div class="status-badge">
-      <div class="dot" id="status-dot"></div>
-      <span id="status-text">carregando...</span>
+    <div class="status-pill loading" id="status-pill">
+      <div class="dot loading" id="status-dot"></div>
+      <span id="status-text">verificando...</span>
     </div>
   </header>
 
-  <!-- Assets -->
-  <div class="section-title">Ativos disponíveis</div>
-  <div class="grid" id="assets-grid">
-    <div class="loading">Verificando arquivos...</div>
+  <!-- Ativos -->
+  <div class="section-label">Ativos disponíveis</div>
+  <div class="assets-grid" id="assets-grid">
+    <!-- Skeletons enquanto carrega -->
+    <div class="asset-card loading"><div class="asset-ticker"><span class="skeleton" style="width:40px;height:14px"></span></div><div class="asset-status"><span class="skeleton"></span></div></div>
+    <div class="asset-card loading"><div class="asset-ticker"><span class="skeleton" style="width:40px;height:14px"></span></div><div class="asset-status"><span class="skeleton"></span></div></div>
+    <div class="asset-card loading"><div class="asset-ticker"><span class="skeleton" style="width:40px;height:14px"></span></div><div class="asset-status"><span class="skeleton"></span></div></div>
+    <div class="asset-card loading"><div class="asset-ticker"><span class="skeleton" style="width:40px;height:14px"></span></div><div class="asset-status"><span class="skeleton"></span></div></div>
+    <div class="asset-card loading"><div class="asset-ticker"><span class="skeleton" style="width:40px;height:14px"></span></div><div class="asset-status"><span class="skeleton"></span></div></div>
   </div>
 
   <!-- Última execução -->
-  <div class="section-title">Última execução do robô</div>
+  <div class="section-label">Última execução do robô</div>
   <div class="info-box" id="last-run-box">
-    <div class="loading">Carregando...</div>
+    <div class="info-row">
+      <span class="info-label"><span class="spinner"></span>Carregando dados...</span>
+      <span class="info-value"></span>
+    </div>
   </div>
 
-  <!-- Endpoints da API -->
-  <div class="section-title">Endpoints da API</div>
-  <div class="endpoint-list">
-    <a class="endpoint" href="/api/cboe?asset=spx" target="_blank">
-      <span class="method">GET</span>
-      <span class="ep-url">/api/cboe?asset=spx</span>
-      <span class="ep-desc">SPX options chain JSON</span>
+  <!-- Execução manual -->
+  <div class="section-label">Execução manual</div>
+  <div class="trigger-panel">
+    <div class="trigger-header">
+      <div class="trigger-title">⚡ Disparar GitHub Actions agora</div>
+      <span style="font-size:10px;color:var(--muted)">Requer token com permissão <code>workflow</code></span>
+    </div>
+    <div class="trigger-body">
+      <div class="field-row">
+        <span class="field-label">Repositório</span>
+        <input class="field-input" id="gh-repo" type="text"
+          placeholder="usuario/vinsc-cboe" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="field-row">
+        <span class="field-label">Token GitHub</span>
+        <input class="field-input" id="gh-token" type="password"
+          placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="trigger-actions">
+        <button class="run-btn" id="run-btn" onclick="triggerWorkflow()">
+          <span id="run-icon">▶</span>
+          <span id="run-label">Executar robô agora</span>
+        </button>
+        <span class="trigger-msg" id="trigger-msg"></span>
+      </div>
+    </div>
+    <div class="trigger-hint">
+      Token e repositório são salvos apenas no <strong>localStorage</strong> do seu navegador — nunca enviados para nenhum servidor nosso.<br>
+      Crie o token em: <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a>
+      — marque apenas o escopo <code>workflow</code>. O robô leva ~3–5 min para concluir.
+    </div>
+  </div>
+
+  <!-- Download direto dos CSVs -->
+  <div class="section-label">Download dos arquivos CSV</div>
+  <div class="csv-list">
+    <a class="csv-row" href="cboe/spx_quotedata.csv" download>
+      <span class="csv-badge">CSV</span>
+      <span class="csv-path">cboe/spx_quotedata.csv</span>
+      <span class="csv-desc">SPX — S&P 500 Index</span>
     </a>
-    <a class="endpoint" href="/api/cboe?asset=spy" target="_blank">
-      <span class="method">GET</span>
-      <span class="ep-url">/api/cboe?asset=spy</span>
-      <span class="ep-desc">SPY options chain JSON</span>
+    <a class="csv-row" href="cboe/spy_quotedata.csv" download>
+      <span class="csv-badge">CSV</span>
+      <span class="csv-path">cboe/spy_quotedata.csv</span>
+      <span class="csv-desc">SPY — S&P 500 ETF</span>
     </a>
-    <a class="endpoint" href="/api/cboe?asset=ndx" target="_blank">
-      <span class="method">GET</span>
-      <span class="ep-url">/api/cboe?asset=ndx</span>
-      <span class="ep-desc">NDX options chain JSON</span>
+    <a class="csv-row" href="cboe/ndx_quotedata.csv" download>
+      <span class="csv-badge">CSV</span>
+      <span class="csv-path">cboe/ndx_quotedata.csv</span>
+      <span class="csv-desc">NDX — Nasdaq 100 Index</span>
     </a>
-    <a class="endpoint" href="/api/cboe?asset=qqq" target="_blank">
-      <span class="method">GET</span>
-      <span class="ep-url">/api/cboe?asset=qqq</span>
-      <span class="ep-desc">QQQ options chain JSON</span>
+    <a class="csv-row" href="cboe/qqq_quotedata.csv" download>
+      <span class="csv-badge">CSV</span>
+      <span class="csv-path">cboe/qqq_quotedata.csv</span>
+      <span class="csv-desc">QQQ — Nasdaq 100 ETF</span>
     </a>
-    <a class="endpoint" href="/api/cboe?asset=vix" target="_blank">
-      <span class="method">GET</span>
-      <span class="ep-url">/api/cboe?asset=vix</span>
-      <span class="ep-desc">VIX options chain JSON</span>
-    </a>
-    <a class="endpoint" href="/api/status" target="_blank">
-      <span class="method">GET</span>
-      <span class="ep-url">/api/status</span>
-      <span class="ep-desc">Status geral do serviço</span>
+    <a class="csv-row" href="cboe/vix_quotedata.csv" download>
+      <span class="csv-badge">CSV</span>
+      <span class="csv-path">cboe/vix_quotedata.csv</span>
+      <span class="csv-desc">VIX — Volatility Index</span>
     </a>
   </div>
 
-  <!-- CSV diretos -->
-  <div class="section-title">Arquivos CSV diretos</div>
-  <div class="endpoint-list">
-    <a class="endpoint" href="/cboe/spx_quotedata.csv" target="_blank">
-      <span class="method">CSV</span>
-      <span class="ep-url">/cboe/spx_quotedata.csv</span>
-      <span class="ep-desc">Download direto — SPX</span>
-    </a>
-    <a class="endpoint" href="/cboe/spy_quotedata.csv" target="_blank">
-      <span class="method">CSV</span>
-      <span class="ep-url">/cboe/spy_quotedata.csv</span>
-      <span class="ep-desc">Download direto — SPY</span>
-    </a>
-    <a class="endpoint" href="/cboe/ndx_quotedata.csv" target="_blank">
-      <span class="method">CSV</span>
-      <span class="ep-url">/cboe/ndx_quotedata.csv</span>
-      <span class="ep-desc">Download direto — NDX</span>
-    </a>
-    <a class="endpoint" href="/cboe/qqq_quotedata.csv" target="_blank">
-      <span class="method">CSV</span>
-      <span class="ep-url">/cboe/qqq_quotedata.csv</span>
-      <span class="ep-desc">Download direto — QQQ</span>
-    </a>
-    <a class="endpoint" href="/cboe/vix_quotedata.csv" target="_blank">
-      <span class="method">CSV</span>
-      <span class="ep-url">/cboe/vix_quotedata.csv</span>
-      <span class="ep-desc">Download direto — VIX</span>
-    </a>
+  <!-- Nota extensão -->
+  <div class="ext-note">
+    <div class="ext-icon">🧩</div>
+    <div class="ext-body">
+      <strong>Download manual via Extensão Chrome</strong><br>
+      Use a extensão <strong>VINSC CBOE Downloader</strong> para baixar os arquivos diretamente do seu navegador.
+      Ela simula a navegação humana na CBOE (delays aleatórios, cliques reais) e dispara o download
+      nativo — sem servidor, sem API, sem bloqueio.<br>
+      Após o download, mova os CSVs para a pasta <code>public/cboe/</code> e faça commit no repositório.
+    </div>
   </div>
 
   <footer>
     <span>VINSC Invest — CBOE Data Feed &copy; 2025</span>
-    <button class="refresh-btn" onclick="loadStatus()">↻ Atualizar</button>
+    <button class="refresh-btn" id="refresh-btn" onclick="init()">↻ Atualizar</button>
   </footer>
 
 </div>
 
 <script>
   const ASSETS = ['spx', 'spy', 'ndx', 'qqq', 'vix'];
+  // Caminhos relativos — funciona no GitHub Pages, Netlify, ou qualquer static host
+  const CSV_BASE    = 'cboe/';
+  const LAST_RUN    = 'cboe/last_run.json';
 
-  async function loadStatus() {
+  // ── Utilitários ──────────────────────────────────────────────────
+  function setStatus(state, text) {
+    const pill = document.getElementById('status-pill');
+    const dot  = document.getElementById('status-dot');
+    const txt  = document.getElementById('status-text');
+    pill.className = 'status-pill ' + state;
+    dot.className  = 'dot ' + state;
+    txt.textContent = text;
+  }
+
+  function fmtBytes(bytes) {
+    if (!bytes) return '—';
+    if (bytes < 1024) return bytes + ' B';
+    return (bytes / 1024).toFixed(1) + ' KB';
+  }
+
+  function fmtDateBR(isoString) {
+    if (!isoString) return '—';
     try {
-      const res = await fetch('/api/status');
-      const data = await res.json();
+      const d = new Date(isoString);
+      return d.toLocaleString('pt-BR', {
+        timeZone: 'America/Sao_Paulo',
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+    } catch { return isoString; }
+  }
 
-      // Badge de status
-      const dot = document.getElementById('status-dot');
-      const txt = document.getElementById('status-text');
-      const available = Object.values(data.files || {}).some(f => f.available);
-      dot.className = 'dot ' + (available ? 'online' : 'error');
-      txt.textContent = available ? 'operacional' : 'sem dados';
-
-      // Grid de ativos
-      const grid = document.getElementById('assets-grid');
-      grid.innerHTML = ASSETS.map(a => {
-        const info = (data.files || {})[a] || {};
-        const ok = info.available;
-        const kb = ok ? (info.size_bytes / 1024).toFixed(1) : 0;
-        return `
-          <a class="asset-card ${ok ? 'ok' : 'error'}" href="/cboe/${a}_quotedata.csv" target="_blank">
-            <div class="asset-ticker">${a.toUpperCase()}</div>
-            <div class="asset-meta">${ok ? '✓ disponível' : '✗ não encontrado'}</div>
-            ${ok ? `<div class="asset-size">${kb} KB</div>` : ''}
-          </a>`;
-      }).join('');
-
-      // Última execução
-      const box = document.getElementById('last-run-box');
-      const lr = data.last_run;
-      if (lr) {
-        const ok = lr.success_count;
-        const total = lr.total;
-        box.innerHTML = `
-          <div class="info-row">
-            <span class="info-label">Data/hora (Brasil)</span>
-            <span class="info-value green">${lr.timestamp_br || '—'}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Resultado</span>
-            <span class="info-value ${ok === total ? 'green' : 'warn'}">${ok}/${total} ativos baixados</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Duração</span>
-            <span class="info-value">${lr.duration_seconds}s</span>
-          </div>
-          ${Object.entries(lr.results || {}).map(([asset, r]) => `
-          <div class="info-row">
-            <span class="info-label">${asset.toUpperCase()}</span>
-            <span class="info-value ${r.success ? 'green' : ''}" style="${!r.success ? 'color:var(--danger)' : ''}">
-              ${r.success ? `✓ ${r.lines} linhas` : '✗ ' + (r.error || 'erro')}
-            </span>
-          </div>`).join('')}`;
-      } else {
-        box.innerHTML = '<div class="loading">Robô ainda não executou</div>';
-      }
-
-    } catch (err) {
-      document.getElementById('status-dot').className = 'dot error';
-      document.getElementById('status-text').textContent = 'erro de conexão';
-      document.getElementById('last-run-box').innerHTML = `<div class="loading">Erro: ${err.message}</div>`;
+  // ── Verifica cada CSV com HEAD (sem baixar o arquivo) ────────────
+  async function checkCSV(asset) {
+    const url = CSV_BASE + asset + '_quotedata.csv';
+    try {
+      const r = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+      if (!r.ok) return { ok: false, size: 0 };
+      const size = parseInt(r.headers.get('content-length') || '0', 10);
+      return { ok: true, size };
+    } catch {
+      return { ok: false, size: 0 };
     }
   }
 
-  loadStatus();
+  // ── Lê last_run.json ─────────────────────────────────────────────
+  async function loadLastRun() {
+    try {
+      const r = await fetch(LAST_RUN + '?t=' + Date.now(), { cache: 'no-store' });
+      if (!r.ok) return null;
+      return await r.json();
+    } catch {
+      return null;
+    }
+  }
+
+  // ── Renderiza cards dos ativos ───────────────────────────────────
+  function renderAssets(results) {
+    const grid = document.getElementById('assets-grid');
+    grid.innerHTML = ASSETS.map(asset => {
+      const r = results[asset];
+      const state = r.ok ? 'ok' : 'error';
+      return `
+        <div class="asset-card ${state}">
+          <div class="asset-ticker">${asset.toUpperCase()}</div>
+          <div class="asset-status">${r.ok ? '✓ disponível' : '✗ não encontrado'}</div>
+          ${r.ok && r.size ? `<div class="asset-size">${fmtBytes(r.size)}</div>` : ''}
+        </div>`;
+    }).join('');
+  }
+
+  // ── Renderiza box de última execução ─────────────────────────────
+  function renderLastRun(data) {
+    const box = document.getElementById('last-run-box');
+
+    // Arquivo existe mas robô ainda não rodou
+    if (!data || data.robot_not_run_yet) {
+      box.innerHTML = `
+        <div class="info-row">
+          <span class="info-label">Status</span>
+          <span class="info-value warn">⏳ Robô ainda não executou</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Próxima execução</span>
+          <span class="info-value">GitHub Actions: 10:30, 11:30, 12:30... (Brasília)</span>
+        </div>`;
+      return;
+    }
+
+    // Dados reais da execução
+    const ok    = data.success_count ?? '—';
+    const total = data.total ?? ASSETS.length;
+    const allOk = ok === total;
+
+    let html = `
+      <div class="info-row">
+        <span class="info-label">Data / hora (Brasília)</span>
+        <span class="info-value green">${data.timestamp_br || fmtDateBR(data.timestamp) || '—'}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Resultado geral</span>
+        <span class="info-value ${allOk ? 'green' : 'warn'}">${ok}/${total} ativos baixados</span>
+      </div>`;
+
+    if (data.duration_seconds != null) {
+      html += `
+      <div class="info-row">
+        <span class="info-label">Duração</span>
+        <span class="info-value">${data.duration_seconds}s</span>
+      </div>`;
+    }
+
+    // Resultado por ativo
+    if (data.results) {
+      Object.entries(data.results).forEach(([asset, r]) => {
+        const green = r.success;
+        html += `
+        <div class="info-row">
+          <span class="info-label">${asset.toUpperCase()}</span>
+          <span class="info-value ${green ? 'green' : 'danger'}">
+            ${green
+              ? `✓ ${r.lines != null ? r.lines + ' linhas' : 'ok'}`
+              : '✗ ' + (r.error || 'erro desconhecido')}
+          </span>
+        </div>`;
+      });
+    }
+
+    box.innerHTML = html;
+  }
+
+  // ── Config persistida no localStorage ───────────────────────────
+  const repoInput  = document.getElementById('gh-repo');
+  const tokenInput = document.getElementById('gh-token');
+
+  repoInput.value  = localStorage.getItem('gh_repo')  || '';
+  tokenInput.value = localStorage.getItem('gh_token') || '';
+
+  repoInput.addEventListener('input',  () => localStorage.setItem('gh_repo',  repoInput.value.trim()));
+  tokenInput.addEventListener('input', () => localStorage.setItem('gh_token', tokenInput.value.trim()));
+
+  // ── Disparar workflow_dispatch ───────────────────────────────────
+  async function triggerWorkflow() {
+    const repo  = repoInput.value.trim();
+    const token = tokenInput.value.trim();
+    const btn   = document.getElementById('run-btn');
+    const icon  = document.getElementById('run-icon');
+    const label = document.getElementById('run-label');
+    const msg   = document.getElementById('trigger-msg');
+
+    if (!repo || !repo.includes('/')) {
+      msg.className = 'trigger-msg err';
+      msg.textContent = '✗ Repositório inválido (use: usuario/repo)';
+      return;
+    }
+    if (!token || !token.startsWith('gh')) {
+      msg.className = 'trigger-msg err';
+      msg.textContent = '✗ Token inválido — deve começar com "gh"';
+      return;
+    }
+
+    // Estado: rodando
+    btn.disabled = true;
+    btn.className = 'run-btn running';
+    icon.textContent = '⏳';
+    label.textContent = 'Disparando...';
+    msg.className = 'trigger-msg warn';
+    msg.textContent = 'Enviando requisição para o GitHub...';
+
+    try {
+      // Descobre o ID do workflow pelo nome do arquivo
+      const wfRes = await fetch(`https://api.github.com/repos/${repo}/actions/workflows`, {
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
+      });
+
+      if (!wfRes.ok) {
+        const e = await wfRes.json().catch(() => ({}));
+        throw new Error(e.message || `HTTP ${wfRes.status}`);
+      }
+
+      const wfData = await wfRes.json();
+      // Procura pelo workflow cboe-downloader.yml
+      const wf = wfData.workflows?.find(w =>
+        w.path?.includes('cboe-downloader') || w.name?.toLowerCase().includes('cboe')
+      );
+
+      if (!wf) throw new Error('Workflow cboe-downloader.yml não encontrado no repositório');
+
+      // Dispara o workflow
+      const dispatchRes = await fetch(
+        `https://api.github.com/repos/${repo}/actions/workflows/${wf.id}/dispatches`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/vnd.github+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ ref: 'main', inputs: { reason: 'Disparo manual via dashboard' } })
+        }
+      );
+
+      if (dispatchRes.status === 204 || dispatchRes.ok) {
+        // Sucesso (204 No Content é o esperado)
+        btn.className = 'run-btn success';
+        icon.textContent = '✓';
+        label.textContent = 'Disparado!';
+        msg.className = 'trigger-msg ok';
+        msg.textContent = '✓ Workflow iniciado — leva ~3–5 min. Atualize a página depois.';
+
+        // Link direto para o Actions
+        setTimeout(() => {
+          msg.innerHTML = `✓ Disparado! <a href="https://github.com/${repo}/actions" target="_blank" style="color:var(--blue)">Ver execução →</a>`;
+        }, 1500);
+
+        // Reset do botão após 30s
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.className = 'run-btn';
+          icon.textContent = '▶';
+          label.textContent = 'Executar robô agora';
+        }, 30000);
+
+      } else {
+        const e = await dispatchRes.json().catch(() => ({}));
+        throw new Error(e.message || `HTTP ${dispatchRes.status}`);
+      }
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.className = 'run-btn fail';
+      icon.textContent = '✗';
+      label.textContent = 'Falhou';
+      msg.className = 'trigger-msg err';
+      msg.textContent = '✗ ' + err.message;
+
+      setTimeout(() => {
+        btn.className = 'run-btn';
+        icon.textContent = '▶';
+        label.textContent = 'Executar robô agora';
+      }, 5000);
+    }
+  }
+
+  // ── Main ─────────────────────────────────────────────────────────
+  async function init() {
+    const btn = document.getElementById('refresh-btn');
+    btn.disabled = true;
+    btn.textContent = '↻ verificando...';
+
+    setStatus('loading', 'verificando...');
+
+    // Restaura skeletons
+    document.getElementById('assets-grid').innerHTML = ASSETS.map(() => `
+      <div class="asset-card loading">
+        <div class="asset-ticker"><span class="skeleton" style="width:40px;height:14px"></span></div>
+        <div class="asset-status"><span class="skeleton"></span></div>
+      </div>`).join('');
+
+    document.getElementById('last-run-box').innerHTML = `
+      <div class="info-row">
+        <span class="info-label"><span class="spinner"></span>Carregando dados...</span>
+        <span class="info-value"></span>
+      </div>`;
+
+    // Roda checks em paralelo
+    const [csvResults, lastRun] = await Promise.all([
+      // Checa todos os CSVs simultaneamente
+      Promise.all(ASSETS.map(async a => {
+        const r = await checkCSV(a);
+        return [a, r];
+      })).then(entries => Object.fromEntries(entries)),
+
+      loadLastRun()
+    ]);
+
+    // Renderiza
+    renderAssets(csvResults);
+    renderLastRun(lastRun);
+
+    // Status global
+    const anyOk = Object.values(csvResults).some(r => r.ok);
+    const allOk = Object.values(csvResults).every(r => r.ok);
+
+    if (allOk) {
+      setStatus('ok', 'operacional');
+    } else if (anyOk) {
+      setStatus('ok', 'parcial');
+    } else {
+      setStatus('error', 'sem dados');
+    }
+
+    btn.disabled = false;
+    btn.textContent = '↻ Atualizar';
+  }
+
+  // Inicia ao carregar
+  init();
+
   // Auto-refresh a cada 5 minutos
-  setInterval(loadStatus, 5 * 60 * 1000);
+  setInterval(init, 5 * 60 * 1000);
 </script>
 </body>
 </html>
